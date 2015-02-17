@@ -1,2 +1,94 @@
 # debian-microzedboard
 Minimal debian filesystem armhf and armel
+
+
+Guide to create a minimal minimal Debian filesystem
+Works in armel and armhf
+Addapted from http://www.acmesystems.it/multistrap to Zynq based MicroZedBoard
+
+Adrian Remonda 2015
+
+References:
+http://www.acmesystems.it/multistrap
+
+Requierementes:
+
+~$ sudo apt-get install multistrap
+~$ sudo apt-get install qemu
+~$ sudo apt-get install qemu-user-static
+~$ sudo apt-get install binfmt-support
+~$ sudo apt-get install dpkg-cross
+
+Create a working directory directory:
+
+~$ mkdir multistrap
+~$ cd multistrap
+~/multistrap$
+
+Create the root filesystem
+
+When your multistrap.conf file is ready launch type:
+
+if you are using the default linaro:
+~/multistrap$ sudo multistrap -a armhf -f microzed.confg
+At the end of this procedure the directory target-rootfs directory will contents the whole rootfs tree to be moved into the second partition of an Acme board bootable microSD.
+
+if you are using a compiler without floating point support as the default of the xilinx SDK:
+~/multistrap$ sudo multistrap -a armel -f microzed.conf
+
+Configure now the Debian packages using the armel CPU emulator QEMU and chroot to create a jail where dpkg will see the target-rootfs as its root (/) directory.
+
+    ~/multistrap$ sudo cp /usr/bin/qemu-arm-static target-rootfs/usr/bin
+    ~/multistrap$ sudo mount -o bind /dev/ target-rootfs/dev/
+    ~/multistrap$ sudo LC_ALL=C LANGUAGE=C LANG=C chroot target-rootfs dpkg --configure -a
+
+At the Dash configuration promots answer no.
+
+Do some extra configurations with this script:
+    ~/multistrap$ chmod +x microzed.sh
+    ~/multistrap$ sudo ./microzed.sh
+
+Create now the target root login password:
+
+    ~/multistrap$ sudo chroot target-rootfs passwd
+    Enter new UNIX password:
+    Retype new UNIX password:
+    passwd: password updated successfully
+
+List the packages installed
+
+    ~/multistrap$ sudo chroot target-rootfs dpkg --get-selections | more
+
+Ugrade the system and install new packages
+
+    ~/multistrap$ sudo chroot target-rootfs dpkg --get-selections
+
+At this point you can upgrade Debian to the latest version by typing:
+
+    ~/multistrap$ sudo LC_ALL=C LANGUAGE=C LANG=C chroot target-rootfs apt-get update
+    ~/multistrap$ sudo LC_ALL=C LANGUAGE=C LANG=C chroot target-rootfs apt-get upgrade
+    ~/multistrap$ sudo LC_ALL=C LANGUAGE=C LANG=C chroot target-rootfs apt-get clean
+
+Copy the rootfs contents on microSD
+-----------------------------------
+
+Remove qemu from the target rootfs contents:
+
+    ~/multistrap$ sudo rm target-rootfs/usr/bin/qemu-arm-static
+
+then format a new microSD. You can use fdisk, gparted. 
+Check https://github.com/dasGringuen/MicroZedKernel for a kernel and uboot
+
+Mount the microSD on yourLinux PC and copy all the target-rootfs contents in the second microSD partition mounted.
+Use the lsblk command to be check where it is mounted
+
+~/multistrap$ sudo rsync -axHAX --progress target-rootfs/ <path of your rootfs>
+
+Check the size of each package:
+    dpkg-query -W --showformat='${Installed-Size;10}\t${Package}\n' | sort -k1,1n
+
+Check file system size:
+    df -h   
+    ldu -h --max-depth=1
+
+
