@@ -83,9 +83,10 @@ Remove qemu from the target rootfs contents:
     ~/multistrap$ sudo rm target-rootfs/usr/bin/qemu-arm-static
 
 then format a new microSD. You can use fdisk, gparted. 
+
 Check https://github.com/dasGringuen/MicroZedKernel for a kernel and uboot
 
-Mount the microSD on yourLinux PC and copy all the target-rootfs contents in the second microSD partition mounted.
+Mount the microSD on yourLinux PC and copy all the target-rootfs contents in the second microSD partition.
 Use the lsblk command to be check where it is mounted
 
     ~/multistrap$ sudo rsync -axHAX --progress target-rootfs/ <path of your rootfs>
@@ -96,12 +97,15 @@ Test
 After booting with the sd in the microzedboard
 
 You should be able to connect through ssh with the next command:
+
     ~/multistrap$ ssh root@192.168.1.103
 
 Check the size of each package:
+
     ~/root@arm# dpkg-query -W --showformat='${Installed-Size;10}\t${Package}\n' | sort -k1,1n
 
 Check file system size:
+
     ~/root@arm# df -h
     ~/root@arm# du -h --max-depth=1
 
