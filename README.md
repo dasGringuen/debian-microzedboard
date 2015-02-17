@@ -9,9 +9,11 @@ Addapted from http://www.acmesystems.it/multistrap to Zynq based MicroZedBoard
 Adrian Remonda 2015
 
 References:
+-----------
 http://www.acmesystems.it/multistrap
 
-Requierementes:
+Requirements:
+-------------
 
 ~$ sudo apt-get install multistrap
 ~$ sudo apt-get install qemu
@@ -26,15 +28,19 @@ Create a working directory directory:
 ~/multistrap$
 
 Create the root filesystem
+-------------------------
 
 When your multistrap.conf file is ready launch type:
 
 if you are using the default linaro:
-~/multistrap$ sudo multistrap -a armhf -f microzed.confg
+
+    ~/multistrap$ sudo multistrap -a armhf -f microzed.confg
+
 At the end of this procedure the directory target-rootfs directory will contents the whole rootfs tree to be moved into the second partition of an Acme board bootable microSD.
 
 if you are using a compiler without floating point support as the default of the xilinx SDK:
-~/multistrap$ sudo multistrap -a armel -f microzed.conf
+
+    ~/multistrap$ sudo multistrap -a armel -f microzed.conf
 
 Configure now the Debian packages using the armel CPU emulator QEMU and chroot to create a jail where dpkg will see the target-rootfs as its root (/) directory.
 
@@ -82,13 +88,21 @@ Check https://github.com/dasGringuen/MicroZedKernel for a kernel and uboot
 Mount the microSD on yourLinux PC and copy all the target-rootfs contents in the second microSD partition mounted.
 Use the lsblk command to be check where it is mounted
 
-~/multistrap$ sudo rsync -axHAX --progress target-rootfs/ <path of your rootfs>
+    ~/multistrap$ sudo rsync -axHAX --progress target-rootfs/ <path of your rootfs>
+
+Test
+-----
+
+After booting with the sd in the microzedboard
+
+You should be able to connect through ssh with the next command:
+    ~/multistrap$ ssh root@192.168.1.103
 
 Check the size of each package:
-    dpkg-query -W --showformat='${Installed-Size;10}\t${Package}\n' | sort -k1,1n
+    ~/root@arm# dpkg-query -W --showformat='${Installed-Size;10}\t${Package}\n' | sort -k1,1n
 
 Check file system size:
-    df -h   
-    ldu -h --max-depth=1
+    ~/root@arm# df -h
+    ~/root@arm# du -h --max-depth=1
 
 
