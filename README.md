@@ -1,16 +1,27 @@
-# debian-microzedboard
-Minimal debian filesystem armhf and armel
-
+# Debian on the Zynq based Microzedboard
+Minimal debian filesystem for armhf and armel (arm hard floating point and arm soft floating point)
 
 Guide to create a minimal minimal Debian filesystem
-Works in armel and armhf
-Addapted from http://www.acmesystems.it/multistrap to Zynq based MicroZedBoard
 
 Adrian Remonda 2015
 
 References:
 -----------
+Addapted to Zynq based MicroZedBoard from: 
 http://www.acmesystems.it/multistrap
+
+More information about what is armhf and armel:
+https://wiki.debian.org/ArmHardFloatPort
+
+Default features:
+----------------
+<ul>
+<li>ssh</li>
+<li>gcc</li>
+<li>wget</li>
+<li>rsync</li>
+<li>python</li>
+</ul>
 
 Requirements:
 -------------
