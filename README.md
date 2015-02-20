@@ -110,6 +110,10 @@ After booting with the sd in the microzedboard
 You should be able to connect through ssh with the next command:
 
     ~/multistrap$ ssh root@192.168.1.103
+    
+If you are using the image with the avahi deamon you can connect like this:
+
+    ~/multistrap$ ssh root@microzed.local
 
 Check the size of each package:
 
